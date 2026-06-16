@@ -230,9 +230,20 @@ body {
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-.card-stripe {
-  width: 5px;
+.card-flag {
+  width: 58px;
   flex-shrink: 0;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  background: #e8edf2;
+}
+
+.card-flag img {
+  width: 58px;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .card-body {

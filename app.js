@@ -52,7 +52,7 @@ const CORES = {
   RS:       '#C41E3A',
   SP:       '#1a1a1a',
   ES:       '#003399',
-  AL:       '#0038A8',
+  AL:       '#003087',
   BA:       '#E31B23',
   PR:       '#009033',
   RJ:       '#003087',
@@ -64,6 +64,30 @@ const CORES = {
   Federal:  '#006400',
   default:  '#546e7a',
 };
+
+// Bandeiras via Wikimedia Commons
+const _WM = 'https://commons.wikimedia.org/wiki/Special:FilePath/';
+const BANDEIRAS = {
+  MG:       _WM + 'Bandeira_de_Minas_Gerais.svg',
+  RS:       _WM + 'Bandeira_do_Rio_Grande_do_Sul.svg',
+  SP:       _WM + 'Bandeira_do_estado_de_S%C3%A3o_Paulo.svg',
+  ES:       _WM + 'Bandeira_do_Esp%C3%ADrito_Santo.svg',
+  AL:       _WM + 'Bandeira_de_Alagoas.svg',
+  BA:       _WM + 'Bandeira_da_Bahia.svg',
+  PR:       _WM + 'Bandeira_do_Paran%C3%A1.svg',
+  RJ:       _WM + 'Bandeira_do_estado_do_Rio_de_Janeiro.svg',
+  PI:       _WM + 'Bandeira_do_Piau%C3%AD.svg',
+  PE:       _WM + 'Bandeira_de_Pernambuco.svg',
+  Marinha:  _WM + 'Bandeira_da_Marinha_do_Brasil.svg',
+  FAB:      _WM + 'Bandeira_da_For%C3%A7a_A%C3%A9rea_Brasileira.svg',
+  Exercito: _WM + 'Bandeira_do_Ex%C3%A9rcito_Brasileiro.svg',
+  Federal:  _WM + 'Bandeira_do_Distrito_Federal_%28Brasil%29.svg',
+  default:  _WM + 'Flag_of_Brazil.svg',
+};
+
+function getBandeira(nome) {
+  return BANDEIRAS[getEstado(nome)] || BANDEIRAS.default;
+}
 
 // ── Estado helpers ─────────────────────────────────────────────
 function getEstado(nome) {
@@ -155,6 +179,7 @@ function parseRows(table) {
         cor:          getCor(nome),
         estado:       getEstadoLabel(nome),
         edital:       findEdital(nome),
+        bandeira:     getBandeira(nome),
       };
     })
     .filter(Boolean);
@@ -286,7 +311,10 @@ function cardHTML(c) {
 
   return `
     <div class="card" data-nome="${esc(c.nome)}">
-      <div class="card-stripe" style="background:${c.cor}"></div>
+      <div class="card-flag" style="border-left:3px solid ${c.cor}">
+        <img src="${c.bandeira}" alt="${esc(c.estado)}" loading="lazy"
+             onerror="this.closest('.card-flag').style.background='${c.cor}';this.remove()">
+      </div>
       <div class="card-body">
         <div class="card-name" title="${esc(c.nome)}">${esc(c.nome)}</div>
         <div class="card-meta">
