@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="38" fill="#1a3a5c"/>
+  <!-- Linhas de lista -->
+  <rect x="36" y="52" width="90" height="11" rx="5.5" fill="white"/>
+  <rect x="36" y="75" width="65" height="11" rx="5.5" fill="rgba(255,255,255,0.55)"/>
+  <rect x="36" y="98" width="80" height="11" rx="5.5" fill="white"/>
+  <rect x="36" y="121" width="55" height="11" rx="5.5" fill="rgba(255,255,255,0.55)"/>
+  <!-- Círculo verde com check -->
+  <circle cx="149" cy="143" r="30" fill="#27ae60"/>
+  <polyline points="136,143 145,153 163,131" stroke="white" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

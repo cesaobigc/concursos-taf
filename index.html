@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1a3a5c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Concursos TAF">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <title>Concursos TAF</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- VIEW: Lista -->
+    <div id="view-list" class="view active">
+      <header class="header">
+        <div class="header-left">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M6 4h12M6 8h12M6 12h8"/><circle cx="17" cy="17" r="4"/><path d="m21 21-2.5-2.5"/></svg>
+          <h1 class="header-title">Concursos TAF</h1>
+        </div>
+        <button class="header-btn" id="btn-refresh" title="Atualizar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </button>
+      </header>
+
+      <div class="search-wrap">
+        <div class="search-inner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#999" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="search" type="search" placeholder="Buscar concurso..." autocomplete="off" spellcheck="false">
+        </div>
+      </div>
+
+      <main id="main-list">
+        <div id="loading-state" class="state-box">
+          <div class="spinner"></div>
+          <span>Carregando dados...</span>
+        </div>
+        <div id="error-state" class="state-box error hidden">
+          <span>⚠️</span>
+          <span id="error-msg">Erro ao carregar</span>
+          <button onclick="init()" class="retry-btn">Tentar novamente</button>
+        </div>
+        <div id="sections"></div>
+      </main>
+    </div>
+
+    <!-- VIEW: Detalhe do Concurso -->
+    <div id="view-detail" class="view">
+      <header class="header" id="detail-header">
+        <button class="back-btn" id="btn-back">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Voltar
+        </button>
+      </header>
+      <main id="main-detail"></main>
+    </div>
+
+    <!-- VIEW: Provas do TAF -->
+    <div id="view-taf" class="view">
+      <header class="header" id="taf-header">
+        <button class="back-btn" id="btn-back-taf">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+          Voltar
+        </button>
+        <span class="header-title" id="taf-title">Provas do TAF</span>
+      </header>
+      <main id="main-taf"></main>
+    </div>
+
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>

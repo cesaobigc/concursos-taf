@@ -1,0 +1,19 @@
+{
+  "name": "Concursos TAF",
+  "short_name": "ConcTAF",
+  "description": "Acompanhe concursos públicos com TAF — datas, provas e editais",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#1a3a5c",
+  "theme_color": "#1a3a5c",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
