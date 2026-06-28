@@ -1,4 +1,4 @@
-const CACHE = 'concursos-taf-v1';
+const CACHE = 'concursos-taf-v3';
 const STATIC = ['./', './index.html', './style.css', './app.js', './manifest.json', './icon.svg'];
 
 self.addEventListener('install', e => {

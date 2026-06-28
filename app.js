@@ -44,6 +44,12 @@ const EDITAIS = {
     'https://drive.google.com/file/d/12NCp_zirZc7FT0EUmKXBDxGkKt-1Q5RN/view',
   'CBM AL – Oficial e Soldado':
     'https://drive.google.com/file/d/12Z6gqx4D0YVkybML17siZp84CfzOAEKC/view',
+  'PM PI – Soldado PM':
+    'https://drive.google.com/file/d/1F0R3T-mhrZur4CrcmC-uyu_goQ6oR3m3/view',
+  'PP RN – Policial Penal':
+    'https://drive.google.com/file/d/1XdvqHJD6bIsEt7r4DOQVPaxncVWBhTV2/view',
+  'PMDF – Cadete PM (CFO)':
+    'https://drive.google.com/file/d/1D_2S6V5eIWVLq3w-YFMBahNQCIlAzObe/view',
 };
 
 // Cores por estado (baseadas nas bandeiras)
@@ -58,6 +64,7 @@ const CORES = {
   RJ:       '#003087',
   PI:       '#007a33',
   PE:       '#CC0000',
+  RN:       '#009B3A',
   Marinha:  '#003366',
   FAB:      '#1B3A8A',
   Exercito: '#3d6b4e',
@@ -78,6 +85,7 @@ const BANDEIRAS = {
   RJ:       _WM + 'Bandeira_do_estado_do_Rio_de_Janeiro.svg',
   PI:       _WM + 'Bandeira_do_Piau%C3%AD.svg',
   PE:       _WM + 'Bandeira_de_Pernambuco.svg',
+  RN:       _WM + 'Bandeira_do_Rio_Grande_do_Norte.svg',
   Marinha:  _WM + 'Bandeira_da_Marinha_do_Brasil.svg',
   FAB:      _WM + 'Bandeira_da_For%C3%A7a_A%C3%A9rea_Brasileira.svg',
   Exercito: _WM + 'Bandeira_do_Ex%C3%A9rcito_Brasileiro.svg',
@@ -89,9 +97,26 @@ function getBandeira(nome) {
   return BANDEIRAS[getEstado(nome)] || BANDEIRAS.default;
 }
 
+function getTipo(nome) {
+  const n = nome.replace(/^Concurso\s+/i, '');
+  if (/\bPRF\b/i.test(n))                                                                   return 'Rodoviária Federal';
+  if (/^PM[^A-Z]|^PM[A-Z]{2}|PMERJ|PMMG|PMDF|PMPI|\bCBM\b|Bombeiro|Polícia Militar/i.test(n)) return 'Militar';
+  if (/^PC[^A-Z]|^PCDF|Polícia Civil/i.test(n))                                            return 'Civil';
+  if (/^PP[^A-Z]|^PPRN|Policial Penal|Polícia Penal/i.test(n))                             return 'Penal';
+  if (/Câmara|Legislativo/i.test(n))                                                        return 'Legislativa';
+  if (/Marinha|Exército|FAB|EsPCEx|EsFCEx|EAM|EPCAR|CIAAR|Escola Naval/i.test(n))          return 'Federal';
+  if (/\bPF\b|Polícia Federal/i.test(n))                                                    return 'Federal';
+  return 'Outros';
+}
+
+function getBanca(status) {
+  const m = (status || '').match(/\(([^)]+)\)/);
+  return m ? m[1].trim() : '';
+}
+
 // ── Estado helpers ─────────────────────────────────────────────
 function getEstado(nome) {
-  const siglas = ['MG','RS','SP','ES','AL','BA','PR','RJ','PI','PE'];
+  const siglas = ['MG','RS','SP','ES','AL','BA','PR','RJ','PI','PE','RN'];
   for (const s of siglas) {
     if (new RegExp(`\\b${s}\\b`).test(nome)) return s;
   }
@@ -180,6 +205,8 @@ function parseRows(table) {
         estado:       getEstadoLabel(nome),
         edital:       findEdital(nome),
         bandeira:     getBandeira(nome),
+        tipo:         getTipo(nome),
+        banca:        getBanca(cell(row.c[2])),
       };
     })
     .filter(Boolean);
@@ -230,6 +257,23 @@ function buildTafRows(c) {
   }
 
   return rows;
+}
+
+// ── Filtros ───────────────────────────────────────────────────
+const activeFilters = { tipo: '', status: '', data: '', banca: '' };
+
+function getFiltered() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  return allData.filter(c => {
+    if (q && !c.nome.toLowerCase().includes(q) &&
+             !c.etapa.toLowerCase().includes(q) &&
+             !c.estado.toLowerCase().includes(q)) return false;
+    if (activeFilters.tipo   && c.tipo  !== activeFilters.tipo)          return false;
+    if (activeFilters.status && c.status !== 'Edital publicado')         return false;
+    if (activeFilters.data   && (nil(c.provaData) || /a definir/i.test(c.provaData))) return false;
+    if (activeFilters.banca  && c.banca !== activeFilters.banca)         return false;
+    return true;
+  });
 }
 
 // ── Seções ────────────────────────────────────────────────────
@@ -470,16 +514,33 @@ function goBack() {
 let allData = [];
 
 function setupSearch() {
-  const input = document.getElementById('search');
-  input.addEventListener('input', () => {
-    const q = input.value.toLowerCase().trim();
-    if (!q) { renderList(allData); return; }
-    renderList(allData.filter(c =>
-      c.nome.toLowerCase().includes(q) ||
-      c.etapa.toLowerCase().includes(q) ||
-      c.estado.toLowerCase().includes(q)
-    ));
-  });
+  document.getElementById('search').addEventListener('input', () => renderList(getFiltered()));
+}
+
+function setupFilters() {
+  Object.keys(activeFilters).forEach(k => activeFilters[k] = '');
+  document.querySelectorAll('.chip[data-group="tipo"]').forEach(c =>
+    c.classList.toggle('chip-active', c.dataset.val === ''));
+  document.querySelectorAll('.chip[data-group="status"], .chip[data-group="data"], .chip[data-group="banca"]').forEach(c =>
+    c.classList.remove('chip-active'));
+
+  const extraRow = document.getElementById('chips-extra');
+  extraRow.querySelectorAll('.chip-sep, [data-group="banca"]').forEach(el => el.remove());
+  const bancas = [...new Set(allData.map(c => c.banca).filter(Boolean))].sort();
+  if (bancas.length) {
+    const sep = document.createElement('span');
+    sep.className = 'chip-sep';
+    sep.textContent = '|';
+    extraRow.appendChild(sep);
+    bancas.forEach(b => {
+      const btn = document.createElement('button');
+      btn.className = 'chip';
+      btn.dataset.group = 'banca';
+      btn.dataset.val = b;
+      btn.textContent = b;
+      extraRow.appendChild(btn);
+    });
+  }
 }
 
 // ── Init ──────────────────────────────────────────────────────
@@ -494,6 +555,7 @@ async function init() {
 
   try {
     allData = await fetchData();
+    setupFilters();
     loading.classList.add('hidden');
     renderList(allData);
   } catch (err) {
@@ -506,6 +568,23 @@ async function init() {
 
 // ── Eventos ───────────────────────────────────────────────────
 document.getElementById('btn-refresh').addEventListener('click', init);
+
+document.getElementById('filters-wrap').addEventListener('click', e => {
+  const chip = e.target.closest('.chip[data-group]');
+  if (!chip) return;
+  const group = chip.dataset.group;
+  const val   = chip.dataset.val;
+  if (group === 'tipo') {
+    document.querySelectorAll('.chip[data-group="tipo"]').forEach(c => c.classList.remove('chip-active'));
+    chip.classList.add('chip-active');
+    activeFilters.tipo = val;
+  } else {
+    const isActive = chip.classList.contains('chip-active');
+    chip.classList.toggle('chip-active', !isActive);
+    activeFilters[group] = isActive ? '' : val;
+  }
+  renderList(getFiltered());
+});
 document.getElementById('btn-back').addEventListener('click', goBack);
 document.getElementById('btn-back-taf').addEventListener('click', goBack);
 

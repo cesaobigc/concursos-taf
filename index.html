@@ -34,6 +34,22 @@
         </div>
       </div>
 
+      <div class="filters-wrap" id="filters-wrap">
+        <div class="filter-row">
+          <button class="chip chip-active" data-group="tipo" data-val="">Todos</button>
+          <button class="chip" data-group="tipo" data-val="Militar">Militar</button>
+          <button class="chip" data-group="tipo" data-val="Civil">Civil</button>
+          <button class="chip" data-group="tipo" data-val="Penal">Penal</button>
+          <button class="chip" data-group="tipo" data-val="Rodoviária Federal">PRF</button>
+          <button class="chip" data-group="tipo" data-val="Federal">Federal</button>
+          <button class="chip" data-group="tipo" data-val="Legislativa">Legislativa</button>
+        </div>
+        <div class="filter-row" id="chips-extra">
+          <button class="chip" data-group="status" data-val="publicado">Edital publicado</button>
+          <button class="chip" data-group="data" data-val="com-data">Com data</button>
+        </div>
+      </div>
+
       <main id="main-list">
         <div id="loading-state" class="state-box">
           <div class="spinner"></div>
